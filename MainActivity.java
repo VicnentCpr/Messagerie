@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null) {
-            // Start sign in/sign up activity
+            // Démarage de l'inscription/connection
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
                     SIGN_IN_REQUEST_CODE
             );
         } else {
-            // User is already signed in. Therefore, display
-            // a welcome Toast
-            infoco();
+            // L'utilisateur est déjà connecté on lui
+            // adresse un message de bienvenue.
+
             Toast.makeText(this,
                     "Welcome " + FirebaseAuth.getInstance()
                             .getCurrentUser()
@@ -52,8 +52,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG)
                     .show();
 
-            // Load chat room contents
+            // chargement des messages
             displayChatMessages();
+            //annonce ax autres utilisateur que
+            //l'utilisateur est connecté
+            infoco();
 
             Button fab =
                     (Button) findViewById(R.id.fab);
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View view) {
 
                     EditText input = (EditText)findViewById(R.id.input);
+                    //envoie du message
                     envoie(input);
                     ListView lv = (ListView)findViewById(R.id.list_of_messages);
                     lv.setSelection(lv.getAdapter().getCount()-1);
@@ -76,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
     public void envoie(EditText v){
         System.out.println("test de passage");
         System.out.println("message :"+v.getText().toString());
-        // Read the input field and push a new instance
-        // of ChatMessage to the Firebase database
+        //lecture de l'input et push d'une nouvelle instance
+        // de ChatMessage dans la bd de firebase
         String messagetext=v.getText().toString();
         String messageuser=FirebaseAuth.getInstance()
                 .getCurrentUser()
@@ -90,13 +94,13 @@ public class MainActivity extends AppCompatActivity {
                 );
         System.out.println("message est censé être envoyé");
 
-        // Clear the input
+        // nettoyage de l'input
         v.setText("");
     }
     public void infoco(){
         System.out.println("test de passage");
-        // Read the input field and push a new instance
-        // of ChatMessage to the Firebase database
+        //lecture de l'input et push d'une nouvelle instance
+        // de ChatMessage dans la bd de firebase
         String messageuser=FirebaseAuth.getInstance()
                 .getCurrentUser()
                 .getDisplayName();
@@ -108,14 +112,12 @@ public class MainActivity extends AppCompatActivity {
                 );
         System.out.println("message est censé être envoyé");
 
-        // Clear the input
     }
     public void infodeco(){
         System.out.println("test de passage");
 
-
-        // Read the input field and push a new instance
-        // of ChatMessage to the Firebase database
+        //lecture de l'input et push d'une nouvelle instance
+        // de ChatMessage dans la bd de firebase
 
         String messageuser=FirebaseAuth.getInstance()
                 .getCurrentUser()
@@ -128,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                 );
         System.out.println("message est censé être envoyé");
 
-        // Clear the input
 
     }
     @Override
@@ -138,14 +139,16 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == SIGN_IN_REQUEST_CODE) {
             if(resultCode == RESULT_OK) {
+                //la conncetion à fonctionnée
                 Toast.makeText(this,
-                        "Successfully signed in. Welcome!",
+                        "Connection réussie. Bienvenue!",
                         Toast.LENGTH_LONG)
                         .show();
                 displayChatMessages();
             } else {
+                //la connection ) échouée
                 Toast.makeText(this,
-                        "We couldn't sign you in. Please try again later.",
+                        "Nous ne pouvons pas vous connecter pour le moement. Attendez un peut et réessayez s'il vous plait..",
                         Toast.LENGTH_LONG)
                         .show();
 
@@ -167,16 +170,16 @@ public class MainActivity extends AppCompatActivity {
                 R.layout.message, FirebaseDatabase.getInstance().getReference()) {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
-                // Get references to the views of message.xml
+
                 TextView messageText = (TextView)v.findViewById(R.id.message_text);
                 TextView messageUser = (TextView)v.findViewById(R.id.message_user);
                 TextView messageTime = (TextView)v.findViewById(R.id.message_time);
 
-                // Set their text
+
                 messageText.setText(model.getMessageText());
                 messageUser.setText(model.getMessageUser());
 
-                // Format the date before showing it
+
                 messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
                         model.getMessageTime()));
             }
@@ -187,17 +190,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_sign_out) {
+            //deconnection
             infodeco();
             AuthUI.getInstance().signOut(this)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            //deconnection réussie et terminée
                             Toast.makeText(MainActivity.this,
                                     "You have been signed out.",
                                     Toast.LENGTH_LONG)
                                     .show();
 
-                            // Close activity
+                            // Fermeture de l'activity
                             finish();
                         }
                     });
