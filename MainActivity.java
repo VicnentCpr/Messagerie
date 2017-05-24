@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // User is already signed in. Therefore, display
             // a welcome Toast
+            infoco();
             Toast.makeText(this,
                     "Welcome " + FirebaseAuth.getInstance()
                             .getCurrentUser()
@@ -60,24 +61,75 @@ public class MainActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     EditText input = (EditText)findViewById(R.id.input);
+                    envoie(input);
+                    ListView lv = (ListView)findViewById(R.id.list_of_messages);
+                    lv.setSelection(lv.getAdapter().getCount()-1);
 
-                    // Read the input field and push a new instance
-                    // of ChatMessage to the Firebase database
-                    FirebaseDatabase.getInstance()
-                            .getReference()
-                            .push()
-                            .setValue(new ChatMessage(input.getText().toString(),
-                                    FirebaseAuth.getInstance()
-                                            .getCurrentUser()
-                                            .getDisplayName())
-                            );
 
-                    // Clear the input
-                    input.setText("");
+
                 }
             });
         }
+    }
+    public void envoie(EditText v){
+        System.out.println("test de passage");
+        System.out.println("message :"+v.getText().toString());
+        // Read the input field and push a new instance
+        // of ChatMessage to the Firebase database
+        String messagetext=v.getText().toString();
+        String messageuser=FirebaseAuth.getInstance()
+                .getCurrentUser()
+                .getDisplayName();
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .push()
+                .setValue(new ChatMessage(messagetext,
+                        messageuser)
+                );
+        System.out.println("message est censé être envoyé");
+
+        // Clear the input
+        v.setText("");
+    }
+    public void infoco(){
+        System.out.println("test de passage");
+        // Read the input field and push a new instance
+        // of ChatMessage to the Firebase database
+        String messageuser=FirebaseAuth.getInstance()
+                .getCurrentUser()
+                .getDisplayName();
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .push()
+                .setValue(new ChatMessage(messageuser+" viens juste de se connecter.",
+                        "Information")
+                );
+        System.out.println("message est censé être envoyé");
+
+        // Clear the input
+    }
+    public void infodeco(){
+        System.out.println("test de passage");
+
+
+        // Read the input field and push a new instance
+        // of ChatMessage to the Firebase database
+
+        String messageuser=FirebaseAuth.getInstance()
+                .getCurrentUser()
+                .getDisplayName();
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .push()
+                .setValue(new ChatMessage(messageuser+" viens juste de se deconnecter.",
+                        "Information")
+                );
+        System.out.println("message est censé être envoyé");
+
+        // Clear the input
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
@@ -135,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_sign_out) {
+            infodeco();
             AuthUI.getInstance().signOut(this)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
